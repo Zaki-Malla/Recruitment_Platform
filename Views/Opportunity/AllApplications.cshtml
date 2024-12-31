@@ -1,0 +1,64 @@
+﻿@inject IOpportunitiesRepository _opportunitiesRepository
+@{
+    ViewData["Title"] = "All Applications";
+}
+
+<div class="content">
+    <div class="card mb-5">
+        <div class="card-header bg-primary text-white">
+            <h5>All Applications</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Applicant Name</th>
+                        <th>Address</th>
+                        <th>Age</th>
+                        <th>Status</th>
+                        <th>Application Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.Offers != null && ViewBag.Offers.Count > 0)
+                    {
+                        foreach (var application in ViewBag.Offers)
+                        {
+                            <tr>
+                                <td>@_opportunitiesRepository.GetOne(application.OpportunityId).CompanyName</td>
+                                <td>@application.FullName</td>
+                                <td>@application.Address</td>
+                                <td>@application.Age</td>
+                                <td>
+                                    <span class="badge @(application.Status == "Accepted" ? "bg-success" : application.Status == "Under Review" ? "bg-warning" : "bg-secondary")">
+                                        @application.Status
+                                    </span>
+                                </td>
+                                <td>@application.OfferDate.ToString("yyyy/MM/dd")</td>
+                                <td>
+                                    <form asp-controller="Employer" asp-action="ViewOffer" method="post" class="d-inline">
+                                        <input type="hidden" name="OfferId" value="@application.Id" />
+                                        <button type="submit" class="btn btn-info btn-sm">View Offer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">No applications available.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a asp-action="EmployerDashboard" asp-controller="Home" class="btn btn-primary btn-lg">
+            Return to Home Screen
+        </a>
+    </div>
+</div>

@@ -1,0 +1,131 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = Model.UserProfile.FullName + " | Dashboard";
+}
+
+<div class="content bg-light min-vh-100 py-5">
+    <div class="container">
+        <div class="row gy-3 gx-5 gx-xxl-6">
+
+            <div class="col-lg-4">
+                <div class="card mb-5">
+                    <div class="card-header hover-actions-trigger position-relative mb-7" style="min-height: 130px;">
+                        <div class="bg-holder rounded-top" style="background-image: linear-gradient(0deg, #000000 -3%, rgba(0, 0, 0, 0) 83%), url(../../assets/img/generic/59.png)">
+                            <label class="cover-image-file-input" for="upload-feed-cover-image"></label>
+                            <div class="hover-actions end-0 bottom-0 pe-1 pb-2 text-white">
+                                <svg class="svg-inline--fa fa-camera me-2 overlay-icon" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="camera" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                    <path fill="currentColor" d="M194.6 32H317.4..."></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <input class="d-none" id="upload-feed-porfile-picture" type="file">
+                        <label class="avatar avatar-4xl status-online feed-avatar-profile cursor-pointer" for="upload-feed-porfile-picture">
+                            <img class="rounded-circle img-thumbnail bg-white shadow-sm" src="../../assets/img/team/59.webp" width="200" alt="">
+                        </label>
+                    </div>
+                    <div class="card-body">
+                        <h3>Welcome, @Model.UserProfile.FullName !</h3>
+                        <p class="text-700">SOON!.</p>
+                    </div>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm mt-3">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </form>
+                    <div class="card-body bg-light text-dark rounded-bottom">
+                        <p><strong>Email:</strong> @Model.UserProfile.Email</p>
+                        <p><strong>Phone:</strong> +963934837778</p>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+
+                <div class="card mb-5 shadow border-0">
+                    <div class="card-header bg-primary text-white d-flex align-items-center">
+                        <h5 class="mb-0">Latest Job Opportunities</h5>
+                        <i class="fas fa-briefcase ms-auto"></i>
+                    </div>
+                    <div class="card-body bg-light">
+                        <ul class="list-group list-group-flush">
+                            @if (Model.LatestOpportunities != null && Model.LatestOpportunities.Count > 0)
+                            {
+                                foreach (var job in Model.LatestOpportunities)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@job.Description</strong>
+                                            <p class="mb-0 text-muted">@job.CompanyName - @job.WorkType</p>
+                                            <small class="text-muted">@job.PublishDate.ToString("yyyy/MM/dd")</small>
+                                        </div>
+                                        <span class="badge bg-success">@job.Status</span>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="list-group-item text-center text-muted">
+                                    No job opportunities available at the moment.
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center bg-light">
+                        <a asp-action="AllOpportunities" asp-controller="Opportunity" class="btn btn-primary btn-lg">
+                            Show All Opportunities
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card mb-5 shadow border-0">
+                    <div class="card-header bg-info text-white d-flex align-items-center">
+                        <h5 class="mb-0">Notifications</h5>
+                        <i class="fas fa-bell ms-auto"></i>
+                    </div>
+
+                    <div class="card-body bg-light">
+                        <ul class="list-group list-group-flush">
+                            @if (Model.Notifications != null && Model.Notifications.Count > 0)
+                            {
+                                foreach (var notification in Model.Notifications)
+                                {
+                                    <li class="list-group-item">
+                                        <div>
+                                            <strong>@notification.Title</strong>
+                                            <p class="mb-0 text-muted">@notification.Description</p>
+                                            <small class="text-muted">@notification.Date.ToString("yyyy/MM/dd")</small>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="list-group-item text-center text-muted">
+                                    No notifications at the moment.
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center bg-light">
+                        <a asp-action="AllNotifications" asp-controller="Notification" class="btn btn-info btn-lg">
+                            View All Notifications
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card mb-5 shadow border-0">
+                    <div class="card-header bg-warning text-dark d-flex align-items-center">
+                        <h5 class="mb-0">Your Performance</h5>
+                        <i class="fas fa-chart-line ms-auto"></i>
+                    </div>
+
+                    <div class="card-body bg-light text-dark">
+                        <p>Total Applications Sent: <strong>@Model.UserProfile.AppliedOpportunitiesCount</strong></p>
+                        <p>Accepted Applications: <strong>@Model.UserProfile.AcceptedOpportunitiesCount</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

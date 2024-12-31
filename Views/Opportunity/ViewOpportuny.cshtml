@@ -1,0 +1,130 @@
+﻿@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="Dashboard" asp-controller="Home" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Back to Home
+        </a>
+        <h2 class="text-primary">Opportunity Details</h2>
+    </div>
+
+    <div class="card mb-5 shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h3>@Model.Opportunity.CompanyName</h3>
+            <p class="mb-0">@Model.Opportunity.WorkType</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <p><strong>Publisher:</strong> @Model.UserInformation.FullName</p>
+                    <p><strong>Address:</strong> @Model.Opportunity.CompanyAddress</p>
+                    <p><strong>Job Requirements:</strong></p>
+                    <ul>
+                        @foreach (var requirement in Model.Opportunity.JobVacancies)
+                        {
+                            <li>@requirement</li>
+                        }
+                    </ul>
+                    <p><strong>Description:</strong> @Model.Opportunity.Description</p>
+                    <p><strong>Skills Required:</strong></p>
+                    <ul>
+                        @foreach (var skill in Model.Opportunity.Skills)
+                        {
+                            <li>@skill</li>
+                        }
+                    </ul>
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="badge @(@Model.Opportunity.Status == "Active" ? "bg-success" : "bg-danger")">
+                            @Model.Opportunity.Status
+                        </span>
+                    </p>
+                    <p><strong>Published On:</strong> @Model.Opportunity.PublishDate.ToString("yyyy/MM/dd")</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <img class="img-fluid mb-3" src="~/@Model.Opportunity.ImagePath" alt="Opportunity Image">
+                    <p class="fw-bold text-muted">Opportunity Image</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            @if (Model.Opportunity.Status == "Active")
+            {
+                <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#applyModal">
+                    <i class="bi bi-send"></i> Apply Now
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-secondary btn-lg" disabled>
+                    <i class="bi bi-x-circle"></i> Opportunity Closed
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="applyModalLabel">Apply for @Model.Opportunity.CompanyName</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="SubmitApplication" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <p><strong>Opportunity:</strong> @Model.Opportunity.Description</p>
+                    <p><strong>Date:</strong> @DateTime.Now.ToString("yyyy/MM/dd")</p>
+                    <hr />
+                    <div class="text-center mb-3">
+                        <img class="img-thumbnail rounded-circle" src="~/@Model.UserInformation.ImagePath" width="150" alt="Applicant Photo">
+                        <p class="fw-bold text-muted">Applicant Photo</p>
+                    </div>
+                    <input type="hidden" name="ApplicantId" value="@Model.UserInformation.Id" />
+                    <input type="hidden" name="OpportunityId" value="@Model.Opportunity.Id" />
+                    <input type="hidden" name="PublisherId" value="@Model.PublisherId" />
+                    <input type="hidden" name="ImagePath" value="@Model.UserInformation.ImagePath" />
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="FullName" value="@Model.UserInformation.FullName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Age</label>
+                        <input type="number" class="form-control" name="Age" value="@Model.UserInformation.Age" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-control" name="Address" value="@Model.UserInformation.Address" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Skills</label>
+                        <textarea class="form-control" name="Skills" rows="3" readonly>@string.Join(", ", Model.UserInformation.Skills)</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Why should we hire you?</label>
+                        <textarea class="form-control" name="Reason" rows="4" placeholder="Write your reason here..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Your CV</label>
+                        <input type="hidden" name="CvPath" value="@Model.UserInformation.CvPath" />
+                        <a href="~/@Model.UserInformation.CvPath" class="btn btn-success" download>
+                            Download CV
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i> Submit Application</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

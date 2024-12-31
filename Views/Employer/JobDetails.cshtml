@@ -1,0 +1,88 @@
+﻿@model OpportunitiesOfferedModel
+
+<div class="container py-5">
+
+    <div class="card bg-primary text-white mb-4">
+        <div class="card-body text-center">
+            <h2>@Model.CompanyName</h2>
+            <p>@Model.CompanyAddress</p>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="row g-4">
+        <!-- Left Column: Company Details -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5>Opportunity Details</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Work Type:</strong> @Model.WorkType</p>
+                    <p><strong>Address:</strong> @Model.CompanyAddress</p>
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="badge @(Model.Status == "Active" ? "bg-success" : Model.Status == "Closed" ? "bg-danger" : "bg-warning")">
+                            @Model.Status
+                        </span>
+                    </p>
+                    <p><strong>Published On:</strong> @Model.PublishDate.ToString("yyyy/MM/dd")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Column: Description and Skills -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5>Job Description</h5>
+                </div>
+                <div class="card-body">
+                    <p>@Model.Description</p>
+
+                    <hr>
+                    <h6>Required Skills:</h6>
+                    <ul class="list-group">
+                        @foreach (var skill in Model.Skills)
+                        {
+                            <li class="list-group-item">@skill</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5>Available Job Vacancies</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    @foreach (var vacancy in Model.JobVacancies)
+                    {
+                        <li class="list-group-item">@vacancy</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        <div class="text-center mt-4">
+            <img src="~/@Model.ImagePath" class="img-fluid rounded" alt="Opportunity Image" style="max-height: 400px;">
+        </div>
+    }
+
+
+    <div class="text-center mt-4">
+        <a asp-controller="Employer" asp-action="MyJobPosts" class="btn btn-secondary btn-lg">
+            Back to Job Posts
+        </a>
+    </div>
+
+</div>

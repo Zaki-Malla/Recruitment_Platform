@@ -1,0 +1,113 @@
+﻿@model List<OpportunitiesOfferedModel>
+
+@{
+    ViewData["Title"] = "All Job Opportunities";
+}
+
+<style>
+    body {
+        background-color: #e9ecef;
+    }
+
+    h2 {
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+
+    .btn-outline-primary {
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+    .container {
+        padding: 20px;
+        border-radius: 15px;
+        background: #ffffff;
+    }
+
+    button#viewMoreButton {
+        transition: all 0.3s ease;
+        font-weight: bold;
+    }
+
+        button#viewMoreButton:hover {
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+        }
+
+</style>
+
+<div class="container py-5" style="background-color: #f8f9fa; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">All Job Opportunities</h2>
+        <a asp-action="Dashboard" asp-controller="Home" class="btn btn-secondary">Return to Home</a>
+    </div>
+
+    <div id="opportunitiesContainer" class="row gy-4">
+        @foreach (var job in Model.Take(7))
+        {
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <div class="position-relative">
+                        <img src="~/@job.ImagePath" class="card-img-top img-fluid" alt="Job Image" style="height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 px-3 py-2">New</span>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-between bg-light">
+                        <div>
+                            <h5 class="card-title text-primary text-truncate">@job.CompanyName</h5>
+                            <p class="card-text text-secondary">@job.WorkType</p>
+                            <p class="card-text text-muted small">@job.PublishDate.ToString("yyyy/MM/dd")</p>
+                        </div>
+                        <a asp-action="ViewOpportuny" asp-controller="Opportunity" asp-route-id="@job.Id" class="btn btn-outline-primary mt-3">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-4">
+        <button id="viewMoreButton" class="btn btn-primary px-4 py-2" onclick="loadMoreOpportunities()">View More</button>
+    </div>
+</div>
+
+
+<script>
+    let currentOffset = 7;
+    function loadMoreOpportunities() {
+        fetch(`/Opportunity/LoadMore?offset=${currentOffset}`)
+            .then(response => response.text())
+            .then(html => {
+                if (html.trim() === '') {
+                    document.getElementById('viewMoreButton').style.display = 'none';
+                } else {
+                    document.getElementById('opportunitiesContainer').innerHTML += html;
+                    currentOffset += 7; 
+                }
+            })
+            .catch(error => console.error('Error loading more opportunities:', error));
+    }
+</script>

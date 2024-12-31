@@ -1,0 +1,75 @@
+﻿@model List<MyJobPostsViewModel>
+
+<div class="content">
+    <div class="pb-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>All Published Job Posts</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Work Type</th>
+                            <th>Publish Date</th>
+                            <th>Applications Received</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var job in Model)
+                            {
+                                <tr>
+                                    <td>@job.CompanyName</td>
+                                    <td>@job.WorkType</td>
+                                    <td>@job.PublishDate.ToString("yyyy/MM/dd")</td>
+                                    <td>@job.ApplicationsReceived</td>
+                                    <td>
+                                        <span class="badge @(job.Status == "Active" ? "bg-success" : job.Status == "Closed" ? "bg-danger" : "bg-warning")">
+                                            @job.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (job.Status == "Active")
+                                        {
+                                            <form method="post" asp-action="CloseOpportunity" asp-controller="Opportunity">
+                                                <input type="hidden" id="OpportunitiesId" name="OpportunitiesId" value="@job.Id" />
+                                            <button class="btn btn-warning btn-sm">Close Applications</button>
+                                            </form>
+                                        }
+                                        else if (job.Status == "Closed")
+                                        {
+                                            <form method="post" asp-action="ActiveOpportunity" asp-controller="Opportunity">
+                                            <input type="hidden" id="OpportunitiesId" name="OpportunitiesId" value="@job.Id" />
+                                            <button class="btn btn-success btn-sm">Reopen Applications</button>
+                                            </form>
+
+                                        }
+                                        <form asp-action="JobDetails" asp-controller="Employer" method="post" class="d-inline">
+                                            <input type="hidden" name="JobId" value="@job.Id" />
+                                            <button type="submit" class="btn btn-info btn-sm">View Details</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center">No job posts available.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="text-center">
+                    <a asp-controller="Home" asp-action="EmployerDashboard" class="btn btn-secondary btn-lg ms-3">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,169 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = @ViewBag.UserFullName + " | Dashboard";
+}
+
+<div class="content">
+    <div class="pb-10">
+        <div class="row gy-3 gx-5 gx-xxl-6">
+
+            <div class="col-lg-5 col-xl-4 d-none d-lg-block">
+                <div class="card mb-5">
+                    <div class="card-header hover-actions-trigger position-relative mb-7" style="min-height: 130px;">
+                        <div class="bg-holder rounded-top" style="background-image: linear-gradient(0deg, #000000 -3%, rgba(0, 0, 0, 0) 83%), url(../../assets/img/generic/59.png)">
+                            <label class="cover-image-file-input" for="upload-feed-cover-image"></label>
+                            <div class="hover-actions end-0 bottom-0 pe-1 pb-2 text-white">
+                                <svg class="svg-inline--fa fa-camera me-2 overlay-icon" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="camera" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                    <path fill="currentColor" d="M194.6 32H317.4..."></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <input class="d-none" id="upload-feed-porfile-picture" type="file">
+                        <label class="avatar avatar-4xl status-online feed-avatar-profile cursor-pointer" for="upload-feed-porfile-picture">
+                            <img class="rounded-circle img-thumbnail bg-white shadow-sm" src="../../assets/img/team/59.webp" width="200" alt="">
+                        </label>
+                    </div>
+                    <div class="card-body">
+                        <h3>Welcome, @ViewBag.UserFullName !</h3>
+                        <p class="text-700">Manage and post job opportunities easily.</p>
+                    </div>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm mt-3">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+            <div class="col-lg-7 col-xl-8">
+                <div class="card d-flex flex-column mb-5">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Your Latest Job Posts</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            @if (ViewBag.LastThreeOppo != null && ViewBag.LastThreeOppo.Count > 0)
+                            {
+                                foreach (var job in ViewBag.LastThreeOppo)
+                                {
+                                    <li class="list-group-item">
+                                        @job.CompanyName - <span class="text-muted">Published: @job.PublishDate.ToString("yyyy/MM/dd")</span>
+                                        <span class="badge @(job.Status == "Active" ? "bg-success" : job.Status == "Closed" ? "bg-danger" : job.Status == "Pending" ? "bg-warning" : "bg-secondary") ms-3">
+                                            @(string.IsNullOrEmpty(job.Status) ? "Unknown" : job.Status)
+                                        </span>
+
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="list-group-item text-center">
+                                    No job posts available.
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="text-center my-5">
+                    <a asp-action="PostNewJob" asp-controller="Employer" class="btn btn-success btn-lg">Post a New Job</a>
+                </div>
+
+                <div class="text-center my-5">
+                    <a asp-action="MyJobPosts" asp-controller="Employer" class="btn btn-primary btn-lg">View All Job Posts</a>
+                </div>
+
+
+                <div class="card d-flex flex-column mb-5">
+                    <div class="card-header bg-info text-white">
+                        <h5>My Job Applications</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Applicant Name</th>
+                                    <th>Address</th>
+                                    <th>Age</th>
+                                    <th>Status</th>
+                                    <th>Application Date</th>
+                                    <th>CV</th>
+                                    <th>Why You</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.LastFourApplications != null && ViewBag.LastFourApplications.Count > 0)
+                                {
+                                    foreach (var application in ViewBag.LastFourApplications)
+                                    {
+                                        <tr>
+                                            <td>@application.Opportunity.CompanyName</td>
+                                            <td>@application.FullName</td>
+                                            <td>@application.Address</td>
+                                            <td>@application.Age</td>
+                                            <td>
+                                                <span class="badge @(application.Status == "Accepted" ? "bg-success" : application.Status == "Under Review" ? "bg-warning" : "bg-secondary")">
+                                                    @application.Status
+                                                </span>
+                                            </td>
+                                            <td>@application.OfferDate.ToString("yyyy/MM/dd")</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(application.UserCv))
+                                                {
+                                                    <a href="~/@Url.Content(application.UserCv)" target="_blank" class="btn btn-secondary btn-sm">View CV</a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No CV</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(application.WhyYou))
+                                                {
+                                                    <span>@application.WhyYou</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">N/A</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <form asp-action="ViewOffer" asp-controller="Employer" method="post" class="d-inline">
+                                                    <input type="hidden" name="OfferId" value="@application.Id" />
+                                                    <button type="submit" class="btn btn-info btn-sm">View Offer</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center">No applications available.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="text-center my-3">
+                    <a asp-action="AllApplications" asp-controller="Opportunity" class="btn btn-secondary btn-lg">View All Applications</a>
+                </div>
+
+                <div class="card d-flex flex-column">
+                    <div class="card-header bg-secondary text-white">
+                        <h5>Performance Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Total Active Jobs: <strong>@ViewBag.ActiveJobs</strong></p>
+                        <p>Total Applications Received: <strong>@ViewBag.ApplicationReceived</strong></p>
+                        <p>Accepted Applications: <strong>@ViewBag.AcceptedApplication</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+﻿@model OfferViewModel
+
+<div class="container py-5">
+
+    <div class="card bg-primary text-white mb-4">
+        <div class="card-body text-center">
+            <h2>Application Details</h2>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5>Applicant Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> @Model.ApplicantName</p>
+                    <p><strong>Age:</strong> @Model.ApplicantAge</p>
+                    <p><strong>Skills:</strong></p>
+                    <ul class="list-group mb-3">
+                        @foreach (var skill in Model.ApplicantSkills ?? new List<string>())
+                        {
+                            <li class="list-group-item">@skill</li>
+                        }
+                    </ul>
+                    <p><strong>CV:</strong> <a href="~/@Model.ApplicantCvPath" target="_blank">View CV</a></p>
+                    <p><strong>Why You:</strong> @Model.WhyYou</p>
+                    <p><strong>Status:</strong>
+                        <span class="badge @(Model.Status == "Accepted" ? "bg-success" : Model.Status == "Rejected" ? "bg-danger" : "bg-warning")">
+                            @Model.Status
+                        </span>
+                    </p>
+                    <p><strong>Job Image:</strong></p>
+                    <img src="~/@Model.ApplicantImage" alt="Applicant Image" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5>Job Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Company Name:</strong> @Model.CompanyName</p>
+                    <p><strong>Work Type:</strong> @Model.WorkType</p>
+                    <p><strong>Address:</strong> @Model.CompanyAddress</p>
+                    <p><strong>Job Vacancies:</strong></p>
+                    <ul class="list-group mb-3">
+                        @foreach (var vacancy in Model.JobVacancies ?? new List<string>())
+                        {
+                            <li class="list-group-item">@vacancy</li>
+                        }
+                    </ul>
+                    <p><strong>Job Description:</strong> @Model.JobDescription</p>
+                    <p><strong>Required Skills:</strong></p>
+                    <ul class="list-group">
+                        @foreach (var jobSkill in Model.JobSkills ?? new List<string>())
+                        {
+                            <li class="list-group-item">@jobSkill</li>
+                        }
+                    </ul>
+                    <p><strong>Job Image:</strong></p>
+                    <img src="~/@Model.JobImagePath" alt="Job Image" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="text-center mt-4">
+        @if(Model.Status == "Pending"){
+        <form method="post" asp-action="AcceptOffer" asp-controller="Employer">
+            <input type="hidden" name="OfferId" id="OfferId" value="@Model.OfferId"/>
+            <button class="btn btn-success btn-lg me-2">Accept Offer</button>
+        </form>  
+        <form method="post" asp-action="RejectOffer" asp-controller="Employer">
+            <input type="hidden" name="OfferId" id="OfferId" value="@Model.OfferId" />
+            <button class="btn btn-danger btn-lg me-2">Reject Offer</button>
+        </form>
+        }
+        <a asp-controller="Home" asp-action="EmployerDashboard" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+﻿@model List<OpportunitiesOfferedModel>
+
+@foreach (var job in Model)
+{
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <img src="~/@job.ImagePath" class="card-img-top" alt="Job Image">
+            <div class="card-body">
+                <h5 class="card-title">@job.CompanyName</h5>
+                <p class="card-text text-muted">@job.WorkType</p>
+                <p class="card-text text-muted">@job.PublishDate.ToString("yyyy/MM/dd")</p>
+                <a href="/Jobs/Details/@job.Id" class="btn btn-primary">Learn More</a>
+            </div>
+        </div>
+    </div>
+}
